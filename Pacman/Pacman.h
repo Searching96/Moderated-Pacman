@@ -27,4 +27,5 @@ public:
 	void wrapAround(float& x, float& y);
 	void checkPelletCollision(vector<Pellet>& pellets);
 	SDL_Rect getRect();
+	void setPosition(float x, float y);
 };

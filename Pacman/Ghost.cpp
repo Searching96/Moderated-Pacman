@@ -146,3 +146,11 @@ void Ghost::cleanup() {
         texture = nullptr;
     }
 }
+
+void Ghost::setPosition(float x, float y)
+{
+	posX = x;
+	posY = y;
+	ghostRect.x = static_cast<int>(posX);
+	ghostRect.y = static_cast<int>(posY);
+}

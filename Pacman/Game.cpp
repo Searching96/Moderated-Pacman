@@ -82,6 +82,35 @@ void Game::handleEvents() {
 			quit = true;
 		}
 		pm->handleEvent(ev);
+		if (ev.type == SDL_MOUSEBUTTONDOWN) {
+			int x, y;
+			SDL_GetMouseState(&x, &y);
+			SDL_Rect resetLivesRect = { 100, 140, 100, 20 };
+			if (isPointInRect(x, y, resetLivesRect)) {
+				// Reset game state
+				lives = MAX_LIVES;
+				gameOver = false;
+				protectionTime = 0;
+
+				// Reset Pacman position
+				pm->setPosition(200, 200);
+
+				// Reset pellets
+				pellets.clear();
+				for (int y = 0; y < MAP.size(); y++) {
+					for (int x = 0; x < MAP[y].size(); x++) {
+						if (MAP[y][x] == 0)
+							pellets.emplace_back(x * TILE_SIZE + TILE_SIZE / 2, y * TILE_SIZE + TILE_SIZE / 2);
+					}
+				}
+
+				// Reset ghosts' positions
+				ghosts[0]->setPosition(20, 420);
+				ghosts[1]->setPosition(20, 20);
+				ghosts[2]->setPosition(380, 420);
+				ghosts[3]->setPosition(380, 20);
+			}
+		}
 	}
 }
 
@@ -111,14 +140,14 @@ void Game::render() {
 	if (checkWin()) {
 		renderText("You Win!", 100, 100, 24, color);
 		SDL_RenderPresent(rd);
-		SDL_Delay(waitTime); 
+		SDL_Delay(waitTime);
 		quit = true;
 	}
 	if (gameOver) {
 		renderText("You Lose!", 100, 100, 24, color);
+		SDL_Rect resetLivesRect = renderText("New Game!", 100, 140, 24, color); // New text element
 		SDL_RenderPresent(rd);
-		SDL_Delay(waitTime);
-		quit = true;
+		// Do not set quit to true here
 	}
 	SDL_RenderPresent(rd);
 }
@@ -127,11 +156,11 @@ bool Game::checkWin() {
 	return pellets.empty();
 }
 
-void Game::renderText(const string& message, int x, int y, int size, SDL_Color color) {
+SDL_Rect Game::renderText(const string& message, int x, int y, int size, SDL_Color color) {
 	TTF_Font* font = TTF_OpenFont("Emulogic-zrEw.ttf", size);
 	if (font == nullptr) {
 		std::cerr << "Failed to load font: " << TTF_GetError() << std::endl;
-		return;
+		return { 0, 0, 0, 0 };
 	}
 
 	SDL_Surface* surfaceMessage = TTF_RenderText_Solid(font, message.c_str(), color);
@@ -148,6 +177,8 @@ void Game::renderText(const string& message, int x, int y, int size, SDL_Color c
 	SDL_FreeSurface(surfaceMessage);
 	SDL_DestroyTexture(messageTexture);
 	TTF_CloseFont(font);
+
+	return messageRect; // Return the rectangle
 }
 
 void Game::checkGhostCollision() {
@@ -161,6 +192,10 @@ void Game::checkGhostCollision() {
 			}
 		}
 	}
+}
+
+bool Game::isPointInRect(int x, int y, SDL_Rect rect) {
+	return (x >= rect.x && x <= rect.x + rect.w && y >= rect.y && y <= rect.y + rect.h);
 }
 
 void Game::DrawProtectionSphere() {

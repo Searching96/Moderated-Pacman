@@ -34,4 +34,5 @@ public:
 	bool checkPacmanCollision(Pacman* pacman);
 	bool init(SDL_Renderer* rd, const string& imagePath);
 	void cleanup();
+	void setPosition(float x, float y);
 };

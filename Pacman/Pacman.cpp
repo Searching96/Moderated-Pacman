@@ -147,3 +147,11 @@ void Pacman::checkPelletCollision(vector<Pellet>& pellets) {
 SDL_Rect Pacman::getRect() {
     return pacmanRect;
 }
+
+void Pacman::setPosition(float x, float y)
+{
+	posX = x;
+	posY = y;
+	pacmanRect.x = static_cast<int>(posX);
+	pacmanRect.y = static_cast<int>(posY);
+}

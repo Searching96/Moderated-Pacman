@@ -31,7 +31,8 @@ public:
 	void run();
 	void close();
 	bool checkWin();
-	void renderText(const string& message, int x, int y, int size, SDL_Color color);
+	SDL_Rect renderText(const string& message, int x, int y, int size, SDL_Color color);
 	void checkGhostCollision();
 	void DrawProtectionSphere();
+	bool isPointInRect(int x, int y, SDL_Rect rect);
 };
